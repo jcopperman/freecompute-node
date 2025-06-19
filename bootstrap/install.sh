@@ -107,6 +107,13 @@ create_directories() {
     log "Creating Ollama data directory: $OLLAMA_DATA_DIR"
     mkdir -p "$OLLAMA_DATA_DIR"
   fi
+  
+  # Make sure nginx configuration directory exists
+  if [ "${NGINX_ENABLED:-true}" != "false" ]; then
+    log "Ensuring Nginx configuration directory exists"
+    mkdir -p "$(dirname "$0")/nginx"
+    mkdir -p "$(dirname "$0")/scripts"
+  fi
 }
 
 # Function to start services with Docker Compose
@@ -118,6 +125,12 @@ start_services() {
   # Build profile list based on enabled services
   PROFILES=""
   
+  if [ "${NGINX_ENABLED:-true}" != "false" ]; then
+    log "Nginx dashboard enabled"
+  else
+    log "Nginx dashboard disabled"
+  fi
+
   if [ "${MINIO_ENABLED:-true}" != "false" ]; then
     log "MinIO service enabled"
   else
@@ -187,6 +200,10 @@ main() {
   log "You can access your Free Compute Node services at:"
   
   # Display access information
+  if [ "${NGINX_ENABLED:-true}" != "false" ]; then
+    log "- Dashboard: http://localhost:${NGINX_PORT:-80}"
+  fi
+
   if [ "${MINIO_ENABLED:-true}" != "false" ]; then
     log "- MinIO API: http://localhost:${MINIO_PORT:-9000}"
     log "- MinIO Console: http://localhost:${MINIO_CONSOLE_PORT:-9001}"

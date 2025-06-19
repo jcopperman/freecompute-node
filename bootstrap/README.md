@@ -12,6 +12,7 @@ This directory contains everything you need to set up your own Free Compute Node
 
 ### Services Included
 
+* Nginx (dashboard and service proxy)
 * MinIO (object storage)
 * Ollama (AI inference, optional)
 * Tailscale (mesh networking)
@@ -84,6 +85,11 @@ The script will:
 * `MINIO_ROOT_PASSWORD`: Admin password (change from default!)
 * `MINIO_PORT`: API port (default: 9000)
 * `MINIO_CONSOLE_PORT`: Web console port (default: 9001)
+
+### Nginx Dashboard
+
+* `NGINX_ENABLED`: Set to false to disable
+* `NGINX_PORT`: Web dashboard port (default: 80)
 
 ### Ollama AI Service (Optional)
 

@@ -1,0 +1,42 @@
+{
+  "node": {
+    "name": "${NODE_NAME}",
+    "role": "${NODE_ROLE}",
+    "version": "0.1.0",
+    "uptime": "",
+    "lastUpdated": ""
+  },
+  "services": {
+    "nginx": {
+      "status": "active",
+      "port": ${NGINX_PORT},
+      "url": "/"
+    },
+    "minio": {
+      "status": "${MINIO_ENABLED}",
+      "port": ${MINIO_PORT},
+      "consolePort": ${MINIO_CONSOLE_PORT},
+      "url": "/minio/"
+    },
+    "ollama": {
+      "status": "${OLLAMA_ENABLED}",
+      "port": ${OLLAMA_PORT},
+      "url": "/ollama/",
+      "models": []
+    }
+  },
+  "resources": {
+    "cpu": "",
+    "memory": "",
+    "disk": ""
+  },
+  "network": {
+    "tailscale": {
+      "connected": false,
+      "ip": ""
+    },
+    "lan": {
+      "ip": ""
+    }
+  }
+}
