@@ -73,7 +73,6 @@ One node is all it takes to start.
 We’re building in public.
 If you want to contribute, test, host a node, or help us federate:
 
-* \[GitHub org or site coming soon]
 * \[Discord/Matrix/Zulip link coming soon]
 
 Pull requests welcome. Dollars not required.
