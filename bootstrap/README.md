@@ -5,7 +5,7 @@ This directory contains everything you need to set up your own Free Compute Node
 ## What's Included
 
 - **`.env.example`**: Template for configuration with sensible defaults
-- **`docker-compose.yml`**: Container setup for core services (MinIO, Ollama)
+- **`docker-compose.yml`**: Container setup for core services (MinIO and optional Ollama)
 - **`install.sh`**: Main installation script that sets up everything
 - **`register-node.sh`**: Generates node information for local reference
 
@@ -41,7 +41,7 @@ The script will:
 - Set up Tailscale with your auth key (if provided)
 - Create necessary data directories
 - Start the configured services
-- Pull the specified Ollama model
+- Pull Ollama model (only if Ollama is enabled)
 - Register your node information
 
 ## Configuration Options
@@ -63,10 +63,10 @@ The script will:
 - `MINIO_PORT`: API port (default: 9000)
 - `MINIO_CONSOLE_PORT`: Web console port (default: 9001)
 
-### Ollama AI Service
-- `OLLAMA_ENABLED`: Set to false to disable
+### Ollama AI Service (Optional)
+- `OLLAMA_ENABLED`: Set to true to enable (disabled by default)
 - `OLLAMA_PORT`: API port (default: 11434)
-- `OLLAMA_MODEL`: Default AI model to pull automatically
+- `OLLAMA_MODEL`: Default AI model to pull if enabled
 
 ### Storage
 - `DATA_ROOT`: Base directory for all persistent data
