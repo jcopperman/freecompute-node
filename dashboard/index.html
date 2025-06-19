@@ -154,71 +154,59 @@
     </footer>
 
     <script>
-        // Fetch node status data
-        async function fetchNodeStatus() {
-            try {
-                const response = await fetch('/api/status');
-                if (!response.ok) {
-                    throw new Error('Failed to fetch node status');
-                }
-                const data = await response.json();
-                updateDashboard(data);
-            } catch (error) {
-                console.error('Error fetching node status:', error);
-                document.getElementById('node-name').textContent = 'Error loading node data';
-            }
-        }
-
-        // Update dashboard with fetched data
-        function updateDashboard(data) {
-            // Update node info
-            document.getElementById('node-name').textContent = data.node.name || 'Unnamed Node';
-            document.getElementById('node-role').textContent = data.node.role || 'Unspecified';
-            document.getElementById('node-uptime').textContent = data.node.uptime || 'Unknown';
-            document.getElementById('last-updated').textContent = data.node.lastUpdated || new Date().toLocaleString();
-
-            // Update services
+        // Create service cards manually instead of fetching
+        document.addEventListener('DOMContentLoaded', function() {
+            // Default node info
+            document.getElementById('node-name').textContent = 'Free Compute Node';
+            
+            // Create service cards
             const servicesContainer = document.getElementById('services-container');
-            servicesContainer.innerHTML = '';
-
-            for (const [serviceName, serviceData] of Object.entries(data.services)) {
-                const serviceCard = document.createElement('div');
-                serviceCard.className = 'card';
-                
-                const isActive = serviceData.status === 'active' || serviceData.status === 'true';
-                const statusClass = isActive ? 'status-active' : 'status-inactive';
-                const statusText = isActive ? 'Active' : 'Inactive';
-
-                serviceCard.innerHTML = `
-                    <div class="card-header">
-                        <span class="status-indicator ${statusClass}"></span>
-                        ${serviceName.charAt(0).toUpperCase() + serviceName.slice(1)}
-                    </div>
-                    <div class="card-body">
-                        <p><strong>Status:</strong> ${statusText}</p>
-                        ${serviceData.port ? `<p><strong>Port:</strong> ${serviceData.port}</p>` : ''}
-                        ${serviceData.url ? `<p><a href="${serviceData.url}" class="btn btn-primary">Open ${serviceName}</a></p>` : ''}
-                    </div>
-                `;
-                
-                servicesContainer.appendChild(serviceCard);
-            }
-
-            // Update resources
-            document.getElementById('cpu-usage').textContent = data.resources.cpu || 'Unknown';
-            document.getElementById('memory-usage').textContent = data.resources.memory || 'Unknown';
-            document.getElementById('disk-usage').textContent = data.resources.disk || 'Unknown';
-
-            // Update network
-            const tailscaleStatus = data.network.tailscale.connected ? 'Connected' : 'Disconnected';
-            const tailscaleIP = data.network.tailscale.ip || 'Not available';
-            document.getElementById('tailscale-status').textContent = `${tailscaleStatus} (${tailscaleIP})`;
-            document.getElementById('lan-ip').textContent = data.network.lan.ip || 'Unknown';
+            
+            // Nginx card
+            const nginxCard = createServiceCard('Nginx', 'active', 80, '/');
+            servicesContainer.appendChild(nginxCard);
+            
+            // MinIO card
+            const minioCard = createServiceCard('MinIO', 'active', 9000, '/minio/');
+            servicesContainer.appendChild(minioCard);
+            
+            // Ollama card (optional)
+            const ollamaCard = createServiceCard('Ollama', 'inactive', 11434, '/ollama/');
+            servicesContainer.appendChild(ollamaCard);
+            
+            // Set static resource info
+            document.getElementById('node-role').textContent = 'general';
+            document.getElementById('node-uptime').textContent = 'Check system for details';
+            document.getElementById('last-updated').textContent = new Date().toLocaleString();
+            document.getElementById('cpu-usage').textContent = 'N/A (static dashboard)';
+            document.getElementById('memory-usage').textContent = 'N/A (static dashboard)';
+            document.getElementById('disk-usage').textContent = 'N/A (static dashboard)';
+            document.getElementById('tailscale-status').textContent = 'Status unknown';
+            document.getElementById('lan-ip').textContent = 'Check system for details';
+        });
+        
+        function createServiceCard(name, status, port, url) {
+            const card = document.createElement('div');
+            card.className = 'card';
+            
+            const isActive = status === 'active';
+            const statusClass = isActive ? 'status-active' : 'status-inactive';
+            const statusText = isActive ? 'Active' : 'Inactive';
+            
+            card.innerHTML = `
+                <div class="card-header">
+                    <span class="status-indicator ${statusClass}"></span>
+                    ${name}
+                </div>
+                <div class="card-body">
+                    <p><strong>Status:</strong> ${statusText}</p>
+                    <p><strong>Port:</strong> ${port}</p>
+                    <p><a href="${url}" class="btn btn-primary">Open ${name}</a></p>
+                </div>
+            `;
+            
+            return card;
         }
-
-        // Fetch status immediately and then every 30 seconds
-        fetchNodeStatus();
-        setInterval(fetchNodeStatus, 30000);
     </script>
 </body>
 </html>
