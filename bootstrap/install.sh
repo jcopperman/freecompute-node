@@ -102,7 +102,7 @@ create_directories() {
     mkdir -p "$MINIO_DATA_DIR"
   fi
   
-  if [ "${OLLAMA_ENABLED:-true}" != "false" ]; then
+  if [ "${OLLAMA_ENABLED:-false}" = "true" ]; then
     OLLAMA_DATA_DIR=${OLLAMA_DATA_DIR:-$DATA_ROOT/ollama}
     log "Creating Ollama data directory: $OLLAMA_DATA_DIR"
     mkdir -p "$OLLAMA_DATA_DIR"
@@ -124,7 +124,7 @@ start_services() {
     log "MinIO service disabled"
   fi
   
-  if [ "${OLLAMA_ENABLED:-true}" != "false" ]; then
+  if [ "${OLLAMA_ENABLED:-false}" = "true" ]; then
     log "Ollama service enabled"
     
     # If Ollama is enabled and a model is specified, pull it
@@ -132,17 +132,17 @@ start_services() {
       log "Will pull Ollama model: ${OLLAMA_MODEL} after services start"
     fi
   else
-    log "Ollama service disabled"
+    log "Ollama service disabled (default)"
   fi
   
   # Start the services
   docker-compose up -d
   
   # Pull Ollama model if specified
-  if [ "${OLLAMA_ENABLED:-true}" != "false" ] && [ -n "${OLLAMA_MODEL}" ]; then
+  if [ "${OLLAMA_ENABLED:-false}" = "true" ] && [ -n "${OLLAMA_MODEL}" ]; then
     log "Pulling Ollama model: ${OLLAMA_MODEL}..."
     sleep 5  # Give Ollama a moment to start up
-    docker exec freecompute-ollama ollama pull "${OLLAMA_MODEL}"
+    docker exec freecompute-ollama ollama pull "${OLLAMA_MODEL}" || log "Warning: Failed to pull Ollama model. You can pull it manually later."
     log "Ollama model ${OLLAMA_MODEL} pulled successfully"
   fi
 }
@@ -192,7 +192,7 @@ main() {
     log "- MinIO Console: http://localhost:${MINIO_CONSOLE_PORT:-9001}"
   fi
   
-  if [ "${OLLAMA_ENABLED:-true}" != "false" ]; then
+  if [ "${OLLAMA_ENABLED:-false}" = "true" ]; then
     log "- Ollama API: http://localhost:${OLLAMA_PORT:-11434}"
   fi
   

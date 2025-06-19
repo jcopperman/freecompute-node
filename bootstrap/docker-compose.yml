@@ -29,20 +29,19 @@ services:
       - "freecompute.service=minio"
       - "freecompute.node=${NODE_NAME:-freecompute-node}"
 
-  # Ollama - Local AI Models
+  # Ollama - Local AI Models (optional)
   ollama:
     image: ollama/ollama:latest
     container_name: freecompute-ollama
     restart: unless-stopped
     ports:
-      - "${OLLAMA_PORT}:11434"
+      - "${OLLAMA_PORT:-11434}:11434"
     volumes:
       - ${OLLAMA_DATA_DIR:-${DATA_ROOT}/ollama}:/root/.ollama
     networks:
       - freecompute
     profiles:
-      - default
-      - ${OLLAMA_ENABLED:-true}
+      - ${OLLAMA_ENABLED:-false}
     labels:
       - "freecompute.service=ollama"
       - "freecompute.node=${NODE_NAME:-freecompute-node}"
