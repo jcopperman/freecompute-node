@@ -27,7 +27,6 @@ services:
     command: >
       /bin/sh -c "
         cp -R /usr/share/nginx/html /app/html &&
-        chmod +x /app/scripts/update-status.sh &&
         /app/scripts/update-status.sh &&
         (while true; do sleep 60; /app/scripts/update-status.sh; done) &
         nginx -g 'daemon off;'
@@ -46,7 +45,7 @@ services:
       - "${MINIO_PORT}:9000"
       - "${MINIO_CONSOLE_PORT}:${MINIO_CONSOLE_PORT}"
     volumes:
-      - ${MINIO_DATA_DIR:-${DATA_ROOT}/minio}:/data
+      - ${MINIO_DATA_DIR}:/data
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
       interval: 30s
@@ -69,7 +68,7 @@ services:
     ports:
       - "${OLLAMA_PORT:-11434}:11434"
     volumes:
-      - ${OLLAMA_DATA_DIR:-${DATA_ROOT}/ollama}:/root/.ollama
+      - ${OLLAMA_DATA_DIR}:/root/.ollama
     networks:
       - freecompute
     profiles:
