@@ -1,7 +1,7 @@
 {
   "node": {
-    "name": "${NODE_NAME}",
-    "role": "${NODE_ROLE}",
+    "name": "freecompute-node",
+    "role": "general",
     "version": "0.1.0",
     "uptime": "",
     "lastUpdated": ""
@@ -9,18 +9,18 @@
   "services": {
     "nginx": {
       "status": "active",
-      "port": ${NGINX_PORT},
+      "port": 80,
       "url": "/"
     },
     "minio": {
-      "status": "${MINIO_ENABLED}",
-      "port": ${MINIO_PORT},
-      "consolePort": ${MINIO_CONSOLE_PORT},
+      "status": "active",
+      "port": 9000,
+      "consolePort": 9001,
       "url": "/minio/"
     },
     "ollama": {
-      "status": "${OLLAMA_ENABLED}",
-      "port": ${OLLAMA_PORT},
+      "status": "inactive",
+      "port": 11434,
       "url": "/ollama/",
       "models": []
     }
