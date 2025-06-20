@@ -90,22 +90,18 @@ install_tailscale() {
 create_directories() {
   source .env
   
-  # Create data root directory
-  DATA_ROOT=${DATA_ROOT:-/data}
-  log "Creating data directory: $DATA_ROOT"
-  mkdir -p "$DATA_ROOT"
+  # Create local data directories that Docker can access
+  log "Creating local data directories for Docker services"
   
   # Create service-specific directories
   if [ "${MINIO_ENABLED:-true}" != "false" ]; then
-    MINIO_DATA_DIR=${MINIO_DATA_DIR:-$DATA_ROOT/minio}
-    log "Creating MinIO data directory: $MINIO_DATA_DIR"
-    mkdir -p "$MINIO_DATA_DIR"
+    log "Creating MinIO data directory: $(dirname "$0")/data/minio"
+    mkdir -p "$(dirname "$0")/data/minio"
   fi
   
   if [ "${OLLAMA_ENABLED:-false}" = "true" ]; then
-    OLLAMA_DATA_DIR=${OLLAMA_DATA_DIR:-$DATA_ROOT/ollama}
-    log "Creating Ollama data directory: $OLLAMA_DATA_DIR"
-    mkdir -p "$OLLAMA_DATA_DIR"
+    log "Creating Ollama data directory: $(dirname "$0")/data/ollama"
+    mkdir -p "$(dirname "$0")/data/ollama"
   fi
   
   # Make sure nginx configuration directory exists
@@ -207,6 +203,8 @@ main() {
   if [ "${MINIO_ENABLED:-true}" != "false" ]; then
     log "- MinIO API: http://localhost:${MINIO_PORT:-9000}"
     log "- MinIO Console: http://localhost:${MINIO_CONSOLE_PORT:-9001}"
+    log "  Username: ${MINIO_ROOT_USER:-admin}"
+    log "  Password: ${MINIO_ROOT_PASSWORD:-password} (from your .env file)"
   fi
   
   if [ "${OLLAMA_ENABLED:-false}" = "true" ]; then

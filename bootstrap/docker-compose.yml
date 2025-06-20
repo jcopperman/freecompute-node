@@ -15,9 +15,6 @@ services:
       - minio
     networks:
       - freecompute
-    profiles:
-      - default
-      - ${NGINX_ENABLED:-true}
     labels:
       - "freecompute.service=nginx"
       - "freecompute.node=${NODE_NAME:-freecompute-node}"
@@ -35,7 +32,7 @@ services:
       - "${MINIO_PORT}:9000"
       - "${MINIO_CONSOLE_PORT}:${MINIO_CONSOLE_PORT}"
     volumes:
-      - ${MINIO_DATA_DIR}:/data
+      - ./data/minio:/data
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
       interval: 30s
@@ -43,28 +40,8 @@ services:
       retries: 3
     networks:
       - freecompute
-    profiles:
-      - default
-      - ${MINIO_ENABLED:-true}
     labels:
       - "freecompute.service=minio"
-      - "freecompute.node=${NODE_NAME:-freecompute-node}"
-
-  # Ollama - Local AI Models (optional)
-  ollama:
-    image: ollama/ollama:latest
-    container_name: freecompute-ollama
-    restart: unless-stopped
-    ports:
-      - "${OLLAMA_PORT:-11434}:11434"
-    volumes:
-      - ${OLLAMA_DATA_DIR}:/root/.ollama
-    networks:
-      - freecompute
-    profiles:
-      - ${OLLAMA_ENABLED:-false}
-    labels:
-      - "freecompute.service=ollama"
       - "freecompute.node=${NODE_NAME:-freecompute-node}"
 
 networks:

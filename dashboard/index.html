@@ -163,15 +163,19 @@
             const servicesContainer = document.getElementById('services-container');
             
             // Nginx card
-            const nginxCard = createServiceCard('Nginx', 'active', 80, '/');
+            const nginxCard = createServiceCard('Dashboard', 'active', 8080, '/');
             servicesContainer.appendChild(nginxCard);
             
-            // MinIO card
-            const minioCard = createServiceCard('MinIO', 'active', 9000, '/minio/');
+            // MinIO card - direct link to the MinIO console
+            const minioCard = createServiceCard('MinIO', 'active', 9003, 'http://localhost:9003');
             servicesContainer.appendChild(minioCard);
             
+            // MinIO API card
+            const minioApiCard = createServiceCard('MinIO API', 'active', 9002, 'http://localhost:9002');
+            servicesContainer.appendChild(minioApiCard);
+            
             // Ollama card (optional)
-            const ollamaCard = createServiceCard('Ollama', 'inactive', 11434, '/ollama/');
+            const ollamaCard = createServiceCard('Ollama', 'inactive', 11435, '#');
             servicesContainer.appendChild(ollamaCard);
             
             // Set static resource info
@@ -201,7 +205,8 @@
                 <div class="card-body">
                     <p><strong>Status:</strong> ${statusText}</p>
                     <p><strong>Port:</strong> ${port}</p>
-                    <p><a href="${url}" class="btn btn-primary">Open ${name}</a></p>
+                    ${isActive ? `<p><a href="${url}" class="btn btn-primary" target="_blank">Open ${name}</a></p>` : 
+                      `<p><a href="#" class="btn btn-primary" disabled style="opacity:0.5;cursor:not-allowed;">Service Disabled</a></p>`}
                 </div>
             `;
             

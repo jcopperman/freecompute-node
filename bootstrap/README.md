@@ -45,7 +45,13 @@ This directory contains everything you need to set up your own Free Compute Node
    chmod +x install.sh register-node.sh
    ```
 
-4. Run the installation script:
+4. Create local data directories (for Docker compatibility):
+
+   ```bash
+   mkdir -p ./data/minio ./data/ollama
+   ```
+
+5. Run the installation script:
 
    ```bash
    ./install.sh
@@ -83,23 +89,27 @@ The script will:
 * `MINIO_ENABLED`: Set to false to disable
 * `MINIO_ROOT_USER`: Admin username
 * `MINIO_ROOT_PASSWORD`: Admin password (change from default!)
-* `MINIO_PORT`: API port (default: 9000)
-* `MINIO_CONSOLE_PORT`: Web console port (default: 9001)
+* `MINIO_PORT`: API port (default: 9002)
+* `MINIO_CONSOLE_PORT`: Web console port (default: 9003)
+* `MINIO_DATA_DIR`: Data directory (default: `./data/minio`)
 
 ### Nginx Dashboard
 
 * `NGINX_ENABLED`: Set to false to disable
-* `NGINX_PORT`: Web dashboard port (default: 80)
+* `NGINX_PORT`: Web dashboard port (default: 8080)
 
 ### Ollama AI Service (Optional)
 
 * `OLLAMA_ENABLED`: Set to true to enable (disabled by default)
-* `OLLAMA_PORT`: API port (default: 11434)
+* `OLLAMA_PORT`: API port (default: 11435)
 * `OLLAMA_MODEL`: Default AI model to pull if enabled
+* `OLLAMA_DATA_DIR`: Data directory (default: `./data/ollama`)
 
 ### Storage
 
-* `DATA_ROOT`: Base directory for all persistent data
+* `DATA_ROOT`: Base directory for all persistent data (now uses local `./data` directory by default)
+
+> **Note:** The system now uses local data directories (`./data/minio` and `./data/ollama`) by default for better Docker compatibility. This eliminates permission issues that can occur with absolute paths outside the project directory.
 
 ---
 
@@ -137,6 +147,26 @@ If you encounter issues:
 2. Verify port availability: `ss -tuln | grep [port_number]`
 3. Ensure storage directories are properly mounted: `docker-compose config`
 4. Check Tailscale connectivity: `tailscale status`
+
+### Common Issues and Solutions
+
+#### Docker Mount Issues
+
+If you see an error like:
+```
+Cannot start service minio: Mounts denied: The path /opt/... is not shared from the host and is not known to Docker.
+```
+
+Solution: 
+- Make sure you're using local paths in your `.env` file (e.g., `./data/minio` instead of `/opt/freecompute-data/minio`)
+- Run `mkdir -p ./data/minio ./data/ollama` to create the required local directories
+- Update your `.env` file to use these local paths
+
+#### Service Access
+
+- Dashboard: Accessible at `http://localhost:8080` (or whatever port you set in `NGINX_PORT`)
+- MinIO Console: Directly accessible at `http://localhost:9003` (or whatever port you set in `MINIO_CONSOLE_PORT`)
+- MinIO API: Accessible at `http://localhost:9002` (or whatever port you set in `MINIO_PORT`)
 
 ---
 
