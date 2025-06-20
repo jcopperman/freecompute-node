@@ -1,6 +1,38 @@
 # The Free Compute Movement
 
-A sovereign, local-first stack for South Africa and the Global South.
+A sovereign, lo## What We're Building First
+
+**`freecompute-node`**
+A micro data center you can run on your own terms.
+
+* Under R15,000 total build
+* Can run on solar or grid
+* Comes with object storage, database, app runner, dashboards
+* Connects to others over Tailscale or API-based mesh networking
+* Includes local AI: text, voice, and vision
+* Easy to document, fork, or remix
+
+One node is all it takes to start.
+
+### Mesh Architecture
+
+Nodes can operate independently or as part of a federated mesh network:
+
+```
+┌─────────────┐      ┌─────────────┐      ┌─────────────┐
+│   Node A    │◄────►│   Node B    │◄────►│   Node C    │
+│ (Storage)   │      │ (Compute)   │      │    (AI)     │
+└─────────────┘      └─────────────┘      └─────────────┘
+```
+
+Each node advertises its capabilities to others in the mesh, allowing for:
+
+* Distributed storage across multiple nodes
+* Load balancing of compute tasks
+* Access to specialized hardware (GPUs, large storage arrays)
+* Redundancy and high availability
+
+--- for South Africa and the Global South.
 No dollars. No rent. No permission. Just compute we own.
 
 ---

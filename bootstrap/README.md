@@ -14,6 +14,7 @@ This directory contains everything you need to set up your own Free Compute Node
 
 * Nginx (dashboard and service proxy)
 * MinIO (object storage)
+* Router (API gateway and mesh networking)
 * Ollama (AI inference, optional)
 * Tailscale (mesh networking)
 
@@ -105,6 +106,18 @@ The script will:
 * `OLLAMA_MODEL`: Default AI model to pull if enabled
 * `OLLAMA_DATA_DIR`: Data directory (default: `./data/ollama`)
 
+### Router & API Gateway
+
+* `ROUTER_ENABLED`: Set to false to disable
+* `ROUTER_PORT`: API port (default: 3000)
+* `ROUTER_AUTH_KEY`: Authentication key for API access
+
+### Mesh Federation
+
+* `MESH_ENABLED`: Set to true to enable mesh networking
+* `MESH_HUB`: URL of mesh hub (if using a centralized hub)
+* `MESH_TOKEN`: Authentication token for mesh hub
+
 ### Storage
 
 * `DATA_ROOT`: Base directory for all persistent data (now uses local `./data` directory by default)
@@ -136,6 +149,32 @@ To add additional services:
 1. Add appropriate variables to your `.env` file
 2. Edit the `docker-compose.yml` file to include the new service
 3. Restart with `docker-compose up -d`
+
+## Mesh Federation
+
+Free Compute Nodes can form a federated mesh network, allowing multiple nodes to discover each other, share resources, and route requests across the network.
+
+### Connecting Nodes
+
+To connect two nodes:
+
+```bash
+./mesh-connect.sh http://other-node-ip:3000 other-node-name
+```
+
+### Managing the Mesh
+
+You can view and manage your mesh network using the Router API:
+
+```bash
+# View all nodes in your mesh
+curl -H "X-API-Key: your_api_key" http://localhost:3000/api/mesh/nodes
+
+# Get service information
+curl -H "X-API-Key: your_api_key" http://localhost:3000/api/services
+```
+
+For more information, see the [Mesh Federation Guide](../docs/mesh-federation.md).
 
 ---
 

@@ -20,15 +20,17 @@ Each node provides:
         ▼
 [ Compute Unit ] — Low-power server, mini-PC, or Raspberry Pi
         │
- ┌──────┴─────────────┬─────────────────────┐
- │                    │                     │
- ▼                    ▼                     ▼
-[ Storage Layer ]   [ App Layer ]       [ AI Layer ]
- MinIO, Nextcloud   CapRover, Dokku     Ollama, Whisper
-        │
-        ▼
-[ Networking ]
- Tailscale, IPFS, LoRa
+ ┌──────┴─────────────┬─────────────────────┬──────────────────┐
+ │                    │                     │                  │
+ ▼                    ▼                     ▼                  ▼
+[ Storage Layer ]   [ App Layer ]       [ AI Layer ]     [ Router Layer ]
+ MinIO, Nextcloud   CapRover, Dokku     Ollama, Whisper   API Gateway, Mesh
+        │                                                      │
+        └──────────────────────────────────────────────────────┘
+                                 │
+                                 ▼
+                          [ Networking ]
+                     Tailscale, API Mesh, IPFS
 ```
 
 ---
@@ -39,7 +41,7 @@ Each node provides:
 2. **Power up** — solar, UPS, or wall power
 3. **Access the local dashboard** via LAN or `.local` domain
 4. **Configure your services** via CapRover or compose files
-5. **Optional: connect to the mesh** via Tailscale or ZeroTier
+5. **Connect to other nodes** via the Router API or Tailscale
 6. **It just works** — even with no internet
 
 ---

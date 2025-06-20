@@ -104,6 +104,11 @@ create_directories() {
     mkdir -p "$(dirname "$0")/data/ollama"
   fi
   
+  if [ "${ROUTER_ENABLED:-true}" != "false" ]; then
+    log "Creating Router data directory: $(dirname "$0")/data/router"
+    mkdir -p "$(dirname "$0")/data/router"
+  fi
+  
   # Make sure nginx configuration directory exists
   if [ "${NGINX_ENABLED:-true}" != "false" ]; then
     log "Ensuring Nginx configuration directory exists"
@@ -142,6 +147,12 @@ start_services() {
     fi
   else
     log "Ollama service disabled (default)"
+  fi
+
+  if [ "${ROUTER_ENABLED:-true}" != "false" ]; then
+    log "Router service enabled"
+  else
+    log "Router service disabled"
   fi
   
   # Start the services
@@ -209,6 +220,11 @@ main() {
   
   if [ "${OLLAMA_ENABLED:-false}" = "true" ]; then
     log "- Ollama API: http://localhost:${OLLAMA_PORT:-11434}"
+  fi
+  
+  if [ "${ROUTER_ENABLED:-true}" != "false" ]; then
+    log "- Router API: http://localhost:${ROUTER_PORT:-3000}"
+    log "  API Key: ${ROUTER_AUTH_KEY:-change_this_key} (from your .env file)"
   fi
   
   # Get Tailscale IP if available

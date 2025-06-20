@@ -1,0 +1,138 @@
+{
+  "meshName": "FreeCompute Mesh",
+  "meshVersion": "0.1.0",
+  "lastUpdated": "2025-06-20T12:00:00Z",
+  "nodes": [
+    {
+      "id": "node-1",
+      "name": "Primary Node",
+      "role": "general",
+      "url": "http://node1.local:3000",
+      "capabilities": [
+        "storage",
+        "compute",
+        "gateway"
+      ],
+      "resources": {
+        "storage": "500GB",
+        "memory": "4GB",
+        "cpu": "4 cores"
+      },
+      "services": [
+        {
+          "id": "minio",
+          "name": "MinIO Storage",
+          "type": "storage",
+          "endpoint": "http://node1.local:9002",
+          "console": "http://node1.local:9003"
+        },
+        {
+          "id": "router",
+          "name": "Router API",
+          "type": "api",
+          "endpoint": "http://node1.local:3000"
+        }
+      ],
+      "status": "online",
+      "lastSeen": "2025-06-20T12:00:00Z"
+    },
+    {
+      "id": "node-2",
+      "name": "Storage Node",
+      "role": "storage",
+      "url": "http://node2.local:3000",
+      "capabilities": [
+        "storage",
+        "archive"
+      ],
+      "resources": {
+        "storage": "2TB",
+        "memory": "2GB",
+        "cpu": "2 cores"
+      },
+      "services": [
+        {
+          "id": "minio",
+          "name": "MinIO Storage",
+          "type": "storage",
+          "endpoint": "http://node2.local:9002",
+          "console": "http://node2.local:9003"
+        },
+        {
+          "id": "router",
+          "name": "Router API",
+          "type": "api",
+          "endpoint": "http://node2.local:3000"
+        }
+      ],
+      "status": "online",
+      "lastSeen": "2025-06-20T11:45:00Z"
+    },
+    {
+      "id": "node-3",
+      "name": "AI Node",
+      "role": "ai",
+      "url": "http://node3.local:3000",
+      "capabilities": [
+        "ai",
+        "compute"
+      ],
+      "resources": {
+        "storage": "250GB",
+        "memory": "16GB",
+        "cpu": "8 cores",
+        "gpu": "NVIDIA RTX 4060"
+      },
+      "services": [
+        {
+          "id": "ollama",
+          "name": "Ollama AI",
+          "type": "ai",
+          "endpoint": "http://node3.local:11435"
+        },
+        {
+          "id": "router",
+          "name": "Router API",
+          "type": "api",
+          "endpoint": "http://node3.local:3000"
+        }
+      ],
+      "status": "online",
+      "lastSeen": "2025-06-20T11:55:00Z"
+    }
+  ],
+  "routes": [
+    {
+      "source": "node-1",
+      "target": "node-2",
+      "status": "active",
+      "latency": 15
+    },
+    {
+      "source": "node-1",
+      "target": "node-3",
+      "status": "active",
+      "latency": 22
+    },
+    {
+      "source": "node-2",
+      "target": "node-3",
+      "status": "active",
+      "latency": 18
+    }
+  ],
+  "policies": {
+    "storage": {
+      "replication": 2,
+      "preferredNodes": ["node-1", "node-2"]
+    },
+    "ai": {
+      "preferredNodes": ["node-3"],
+      "fallbackNodes": ["node-1"]
+    },
+    "compute": {
+      "loadBalancing": "round-robin",
+      "preferredNodes": ["node-1", "node-3"]
+    }
+  }
+}

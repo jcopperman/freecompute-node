@@ -100,6 +100,46 @@
             font-size: 0.875rem;
             color: #6c757d;
         }
+        .auth-form {
+            max-width: 500px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 2rem;
+            border-radius: 4px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+        }
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        .form-control {
+            display: block;
+            width: 100%;
+            padding: 0.375rem 0.75rem;
+            font-size: 1rem;
+            line-height: 1.5;
+            color: #495057;
+            background-color: #fff;
+            border: 1px solid #ced4da;
+            border-radius: 0.25rem;
+            box-sizing: border-box;
+        }
+        .alert {
+            padding: 0.75rem 1.25rem;
+            margin-bottom: 1rem;
+            border: 1px solid transparent;
+            border-radius: 0.25rem;
+        }
+        .alert-danger {
+            color: #721c24;
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+        }
+        .text-right {
+            text-align: right;
+        }
+        #error-message {
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -111,39 +151,69 @@
     </header>
 
     <div class="container">
-        <div class="card">
-            <div class="card-header">Node Status</div>
-            <div class="card-body">
-                <div id="node-info">
-                    <p><strong>Role:</strong> <span id="node-role">Loading...</span></p>
-                    <p><strong>Uptime:</strong> <span id="node-uptime">Loading...</span></p>
-                    <p><strong>Last Updated:</strong> <span id="last-updated">Loading...</span></p>
-                </div>
+        <!-- Error message display -->
+        <div id="error-message" class="alert alert-danger"></div>
+        
+        <!-- Authentication form (shown when not authenticated) -->
+        <div class="no-auth">
+            <div class="auth-form">
+                <h2>Authentication Required</h2>
+                <p>Please enter your Router API key to access the dashboard.</p>
+                <form id="api-key-form">
+                    <div class="form-group">
+                        <label for="api-key-input">API Key</label>
+                        <input type="password" id="api-key-input" class="form-control" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Authenticate</button>
+                </form>
             </div>
         </div>
 
-        <h2>Services</h2>
-        <div class="service-grid" id="services-container">
-            <!-- Services will be dynamically added here -->
-        </div>
-
-        <h2>System Resources</h2>
-        <div class="card">
-            <div class="card-body">
-                <div id="resources-info">
-                    <p><strong>CPU:</strong> <span id="cpu-usage">Loading...</span></p>
-                    <p><strong>Memory:</strong> <span id="memory-usage">Loading...</span></p>
-                    <p><strong>Disk:</strong> <span id="disk-usage">Loading...</span></p>
+        <!-- Main dashboard (shown when authenticated) -->
+        <div class="auth-required" style="display:none;">
+            <div class="text-right">
+                <button id="logout-button" class="btn btn-primary">Logout</button>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">Node Status</div>
+                <div class="card-body">
+                    <div id="node-info">
+                        <p><strong>Role:</strong> <span id="node-role">Loading...</span></p>
+                        <p><strong>Uptime:</strong> <span id="node-uptime">Loading...</span></p>
+                        <p><strong>Last Updated:</strong> <span id="last-updated">Loading...</span></p>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <h2>Network</h2>
-        <div class="card">
-            <div class="card-body">
-                <div id="network-info">
-                    <p><strong>Tailscale:</strong> <span id="tailscale-status">Loading...</span></p>
-                    <p><strong>LAN IP:</strong> <span id="lan-ip">Loading...</span></p>
+            <h2>Services</h2>
+            <div class="service-grid" id="services-container">
+                <!-- Services will be dynamically added here -->
+                <div class="card">
+                    <div class="card-body">
+                        <p>Loading services...</p>
+                    </div>
+                </div>
+            </div>
+
+            <h2>System Resources</h2>
+            <div class="card">
+                <div class="card-body">
+                    <div id="resources-info">
+                        <p><strong>CPU:</strong> <span id="cpu-usage">Loading...</span></p>
+                        <p><strong>Memory:</strong> <span id="memory-usage">Loading...</span></p>
+                        <p><strong>Disk:</strong> <span id="disk-usage">Loading...</span></p>
+                    </div>
+                </div>
+            </div>
+
+            <h2>Mesh Network</h2>
+            <div class="card">
+                <div class="card-body">
+                    <div id="mesh-info">
+                        <p><strong>Connected Nodes:</strong> <span id="mesh-node-count">0</span></p>
+                        <p><strong>Last Synchronized:</strong> <span id="mesh-last-synced">Never</span></p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -153,65 +223,6 @@
         <p>Free Compute Node | <a href="https://github.com/yourusername/freecompute-node" target="_blank">GitHub</a></p>
     </footer>
 
-    <script>
-        // Create service cards manually instead of fetching
-        document.addEventListener('DOMContentLoaded', function() {
-            // Default node info
-            document.getElementById('node-name').textContent = 'Free Compute Node';
-            
-            // Create service cards
-            const servicesContainer = document.getElementById('services-container');
-            
-            // Nginx card
-            const nginxCard = createServiceCard('Dashboard', 'active', 8080, '/');
-            servicesContainer.appendChild(nginxCard);
-            
-            // MinIO card - direct link to the MinIO console
-            const minioCard = createServiceCard('MinIO', 'active', 9003, 'http://localhost:9003');
-            servicesContainer.appendChild(minioCard);
-            
-            // MinIO API card
-            const minioApiCard = createServiceCard('MinIO API', 'active', 9002, 'http://localhost:9002');
-            servicesContainer.appendChild(minioApiCard);
-            
-            // Ollama card (optional)
-            const ollamaCard = createServiceCard('Ollama', 'inactive', 11435, '#');
-            servicesContainer.appendChild(ollamaCard);
-            
-            // Set static resource info
-            document.getElementById('node-role').textContent = 'general';
-            document.getElementById('node-uptime').textContent = 'Check system for details';
-            document.getElementById('last-updated').textContent = new Date().toLocaleString();
-            document.getElementById('cpu-usage').textContent = 'N/A (static dashboard)';
-            document.getElementById('memory-usage').textContent = 'N/A (static dashboard)';
-            document.getElementById('disk-usage').textContent = 'N/A (static dashboard)';
-            document.getElementById('tailscale-status').textContent = 'Status unknown';
-            document.getElementById('lan-ip').textContent = 'Check system for details';
-        });
-        
-        function createServiceCard(name, status, port, url) {
-            const card = document.createElement('div');
-            card.className = 'card';
-            
-            const isActive = status === 'active';
-            const statusClass = isActive ? 'status-active' : 'status-inactive';
-            const statusText = isActive ? 'Active' : 'Inactive';
-            
-            card.innerHTML = `
-                <div class="card-header">
-                    <span class="status-indicator ${statusClass}"></span>
-                    ${name}
-                </div>
-                <div class="card-body">
-                    <p><strong>Status:</strong> ${statusText}</p>
-                    <p><strong>Port:</strong> ${port}</p>
-                    ${isActive ? `<p><a href="${url}" class="btn btn-primary" target="_blank">Open ${name}</a></p>` : 
-                      `<p><a href="#" class="btn btn-primary" disabled style="opacity:0.5;cursor:not-allowed;">Service Disabled</a></p>`}
-                </div>
-            `;
-            
-            return card;
-        }
-    </script>
+    <script src="dashboard.js"></script>
 </body>
 </html>
