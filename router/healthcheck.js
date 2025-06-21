@@ -16,10 +16,12 @@ const REGISTRY_PATH = join(__dirname, 'registry.json');
  */
 async function checkServiceAvailability(url) {
   try {
+    console.log(`Checking service availability for ${url}`);
     const response = await fetch(url, { 
       method: 'GET',
       timeout: 3000, // 3 second timeout
     });
+    console.log(`Service check for ${url}: ${response.ok ? 'OK' : 'Failed'}`);
     return response.ok;
   } catch (error) {
     console.error(`Health check failed for ${url}:`, error.message);
@@ -50,7 +52,9 @@ async function checkContainerStatus(containerName) {
 async function updateOllamaModels(registry) {
   if (registry.services.ollama && registry.services.ollama.status === 'active') {
     try {
-      const response = await fetch(`http://localhost:${registry.services.ollama.port}/api/tags`);
+      // Use the ollama container name if it exists, otherwise use localhost
+      const ollamaHost = process.env.OLLAMA_ENABLED === 'true' ? 'ollama' : 'localhost';
+      const response = await fetch(`http://${ollamaHost}:11434/api/tags`);
       if (response.ok) {
         const data = await response.json();
         registry.services.ollama.models = data.models || [];
@@ -121,26 +125,36 @@ export async function performHealthChecks(initialRegistry = null) {
     
     // Check Nginx
     if (registry.services.nginx) {
-      const nginxPort = registry.services.nginx.port || process.env.NGINX_PORT || 80;
-      const nginxUrl = `http://localhost:${nginxPort}`;
-      const isNginxActive = await checkServiceAvailability(nginxUrl);
-      registry.services.nginx.status = isNginxActive ? 'active' : 'inactive';
+      try {
+        // Use container name when in Docker network
+        const isNginxActive = await checkServiceAvailability('http://nginx:80/');
+        registry.services.nginx.status = isNginxActive ? 'active' : 'inactive';
+      } catch (error) {
+        console.error('Error checking Nginx:', error);
+        registry.services.nginx.status = 'inactive';
+      }
       registry.services.nginx.lastChecked = new Date().toISOString();
     }
     
     // Check MinIO
     if (registry.services.minio) {
-      const minioPort = registry.services.minio.port || process.env.MINIO_PORT || 9000;
-      const minioUrl = `http://localhost:${minioPort}/minio/health/live`;
-      const isMinioActive = await checkServiceAvailability(minioUrl);
-      registry.services.minio.status = isMinioActive ? 'active' : 'inactive';
+      try {
+        // Use container name when in Docker network
+        const isMinioActive = await checkServiceAvailability('http://minio:9000/minio/health/live');
+        registry.services.minio.status = isMinioActive ? 'active' : 'inactive';
+      } catch (error) {
+        console.error('Error checking MinIO:', error);
+        registry.services.minio.status = 'inactive';
+      }
       registry.services.minio.lastChecked = new Date().toISOString();
     }
     
     // Check Ollama
     if (registry.services.ollama) {
-      const ollamaPort = registry.services.ollama.port || process.env.OLLAMA_PORT || 11434;
-      const ollamaUrl = `http://localhost:${ollamaPort}/api/tags`;
+      const ollamaPort = registry.services.ollama.port || process.env.OLLAMA_PORT || 11435;
+      // Use the ollama container name if it exists, otherwise use localhost (for standalone Ollama)
+      const ollamaHost = process.env.OLLAMA_ENABLED === 'true' ? 'ollama' : 'localhost'; 
+      const ollamaUrl = `http://${ollamaHost}:11434/api/tags`;
       const isOllamaActive = await checkServiceAvailability(ollamaUrl);
       registry.services.ollama.status = isOllamaActive ? 'active' : 'inactive';
       registry.services.ollama.lastChecked = new Date().toISOString();

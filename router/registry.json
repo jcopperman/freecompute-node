@@ -1,0 +1,46 @@
+{
+  "node": {
+    "name": "production-freecompute-node",
+    "role": "general",
+    "version": "0.1.0",
+    "uptime": "2025-06-21T00:00:00.000Z",
+    "lastUpdated": "2025-06-21T06:05:29.864Z",
+    "resources": {
+      "cpu": 57,
+      "memory": 10,
+      "disk": 0
+    }
+  },
+  "services": {
+    "nginx": {
+      "status": "active",
+      "port": 8080,
+      "url": "/",
+      "lastChecked": "2025-06-21T06:05:29.861Z"
+    },
+    "minio": {
+      "status": "active",
+      "port": 9002,
+      "consolePort": 9003,
+      "url": "/minio/",
+      "lastChecked": "2025-06-21T06:05:29.863Z"
+    },
+    "ollama": {
+      "status": "inactive",
+      "port": 11435,
+      "url": "/ollama/",
+      "models": [],
+      "lastChecked": "2025-06-21T06:05:29.864Z"
+    },
+    "router": {
+      "status": "active",
+      "port": 3100,
+      "url": "/api/",
+      "lastChecked": "2025-06-21T06:05:29.864Z"
+    }
+  },
+  "mesh": {
+    "nodes": [],
+    "lastSynced": null
+  }
+}

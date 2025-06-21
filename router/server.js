@@ -23,7 +23,11 @@ const app = express();
 
 // Middleware
 app.use(helmet());
-app.use(cors());
+app.use(cors({
+  origin: [`http://localhost:8080`, `http://${NODE_NAME}:8080`],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'X-API-Key']
+}));
 app.use(express.json());
 
 // Rate limiting

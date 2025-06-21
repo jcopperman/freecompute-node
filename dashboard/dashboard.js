@@ -1,5 +1,5 @@
 // Dashboard functionality for Free Compute Node
-const API_URL = window.location.hostname === 'localhost' ? 'http://localhost:3000' : `${window.location.protocol}//${window.location.hostname}:3000`;
+const API_URL = window.location.hostname === 'localhost' ? 'http://localhost:3100' : `${window.location.protocol}//${window.location.hostname}:3100`;
 let API_KEY = localStorage.getItem('routerApiKey') || null;
 
 // Show/hide elements based on authentication status

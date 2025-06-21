@@ -66,7 +66,7 @@ services:
       - MESH_HUB=${MESH_HUB:-}
       - MESH_TOKEN=${MESH_TOKEN:-}
     ports:
-      - "${ROUTER_PORT:-3000}:3000"
+      - "${ROUTER_PORT:-3000}:${ROUTER_PORT:-3000}"
     volumes:
       - ../router:/app
       - /app/node_modules
