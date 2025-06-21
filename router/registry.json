@@ -4,9 +4,9 @@
     "role": "general",
     "version": "0.1.0",
     "uptime": "2025-06-21T00:00:00.000Z",
-    "lastUpdated": "2025-06-21T08:12:24.402Z",
+    "lastUpdated": "2025-06-21T08:13:02.699Z",
     "resources": {
-      "cpu": -3122,
+      "cpu": -3144,
       "memory": 10,
       "disk": 0
     }
@@ -16,27 +16,27 @@
       "status": "active",
       "port": 8080,
       "url": "/",
-      "lastChecked": "2025-06-21T08:12:24.400Z"
+      "lastChecked": "2025-06-21T08:13:02.698Z"
     },
     "minio": {
       "status": "active",
       "port": 9002,
       "consolePort": 9003,
       "url": "/minio/",
-      "lastChecked": "2025-06-21T08:12:24.402Z"
+      "lastChecked": "2025-06-21T08:13:02.699Z"
     },
     "ollama": {
       "status": "inactive",
       "port": 11435,
       "url": "/ollama/",
       "models": [],
-      "lastChecked": "2025-06-21T08:12:24.402Z"
+      "lastChecked": "2025-06-21T08:13:02.699Z"
     },
     "router": {
       "status": "active",
       "port": 3100,
       "url": "/api/",
-      "lastChecked": "2025-06-21T08:12:24.402Z"
+      "lastChecked": "2025-06-21T08:13:02.699Z"
     }
   },
   "mesh": {
