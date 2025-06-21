@@ -7,6 +7,11 @@ import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 import fs from 'fs/promises';
 import { performHealthChecks, startHealthCheckScheduler } from './healthcheck.js';
+import metrics, { metricsMiddleware, metricsEndpoint, startMetricsCollection } from './metrics.js';
+import { createLogger, expressLogger } from './logger.js';
+
+// Create a logger instance
+const logger = createLogger('router');
 
 // Load environment variables
 dotenv.config({ path: join(dirname(fileURLToPath(import.meta.url)), '../bootstrap/.env') });
@@ -29,6 +34,8 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'X-API-Key']
 }));
 app.use(express.json());
+app.use(metricsMiddleware()); // Add metrics middleware
+app.use(expressLogger(logger)); // Add request logging middleware
 
 // Rate limiting
 const limiter = rateLimit({
@@ -122,7 +129,7 @@ const updateRegistry = async (registry) => {
 
 // Health check endpoint - no authentication required
 app.get('/api/health', async (req, res) => {
-  res.json({ status: 'ok', timestamp: new Date().toISOString() });
+  res.json({ status: 'ok', node: NODE_NAME });
 });
 
 // Node info
@@ -231,22 +238,31 @@ app.post('/api/mesh/register', authenticate, async (req, res) => {
   res.status(201).json({ message: 'Node registered successfully', meshSize: registry.mesh.nodes.length });
 });
 
-// Start the server
-app.listen(PORT, () => {
-  console.log(`Router service running on port ${PORT}`);
-});
+// Metrics endpoint (for Prometheus)
+app.get('/metrics', metricsEndpoint);
 
-// Perform initial health checks
-performHealthChecks();
+// Initialize server and health checks
+async function initServer() {
+  try {
+    // Run initial health checks
+    const healthCheckResults = await performHealthChecks();
+    
+    // Update metrics based on health check results
+    metrics.updateServiceHealthMetrics(healthCheckResults.services);
+    metrics.updateNodeStatusMetric(healthCheckResults.healthy);
+    
+    // Start health check scheduler
+    startHealthCheckScheduler();
+    
+    // Start metrics collection
+    startMetricsCollection();
+    
+    logger.info(`Server running on port ${PORT}`);
+    logger.info(`Health checks will run every ${HEALTH_CHECK_INTERVAL/1000} seconds`);
+  } catch (error) {
+    logger.error(`Failed to initialize server:`, error);
+  }
+}
 
-// Start health check scheduler with configurable interval
-const healthCheckInterval = parseInt(process.env.HEALTH_CHECK_INTERVAL || 60000);
-const healthChecker = startHealthCheckScheduler(healthCheckInterval);
-
-// Handle process termination
-process.on('SIGTERM', () => {
-  console.log('Terminating health check scheduler');
-  healthChecker.stop();
-});
-
-export default app;
+// Start the server with initialization
+initServer();

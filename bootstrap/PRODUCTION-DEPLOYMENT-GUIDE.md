@@ -44,6 +44,18 @@ The script will:
 ./test-deployment.sh
 ```
 
+### Step 4: Deploy Monitoring Stack (Optional)
+```bash
+cd ~/Repos/freecompute-node/monitoring
+./deploy-monitoring.sh
+```
+
+This will deploy:
+1. ✅ Prometheus for metrics collection
+2. ✅ Loki for log aggregation
+3. ✅ Grafana for visualization
+4. ✅ cAdvisor for container monitoring
+
 ## 🔧 Configuration Details
 
 ### Port Mapping (Safe Configuration)
@@ -53,6 +65,10 @@ The script will:
 | MinIO API | 9000 | **9002** | http://localhost:9002 |
 | MinIO Console | 9001 | **9003** | http://localhost:9003 |
 | Ollama API | 11434 | **11435** | http://localhost:11435 |
+| Grafana | 3000 | **3000** | http://localhost:3000 |
+| Prometheus | 9090 | **9090** | http://localhost:9090 |
+| Loki | 3100 | **3100** | http://localhost:3100 |
+| cAdvisor | 8080 | **8081** | http://localhost:8081 |
 
 ### Data Storage
 - **Root Directory**: `/opt/freecompute-data`
@@ -62,8 +78,10 @@ The script will:
 ### Default Credentials
 - **MinIO Username**: `admin`
 - **MinIO Password**: `FreeCompute2024!Secure`
+- **Grafana Username**: `admin`
+- **Grafana Password**: `FreeCompute2024!Secure`
 
-⚠️ **IMPORTANT**: Change the MinIO password after first login!
+⚠️ **IMPORTANT**: Change the MinIO and Grafana passwords after first login!
 
 ## 🔍 Verification Steps
 
@@ -200,6 +218,45 @@ docker system df
 docker-compose ps
 ```
 
+## 📈 Monitoring Stack
+
+The Free Compute Node now includes a comprehensive monitoring stack that provides:
+
+### 1. Metrics Collection with Prometheus
+- System metrics (CPU, memory, disk)
+- Container metrics
+- Application metrics
+
+### 2. Log Aggregation with Loki
+- Centralized logging
+- Log filtering and search
+- Real-time log viewing
+
+### 3. Visualization with Grafana
+- Pre-configured dashboards
+- Real-time metrics visualization
+- Alert configuration
+
+### 4. Container Monitoring with cAdvisor
+- Container resource usage
+- Performance metrics
+- Historical data
+
+### Accessing Monitoring Tools
+
+| Tool | URL | Purpose |
+|------|-----|---------|
+| Grafana | http://localhost:3000 | Visualization and dashboards |
+| Prometheus | http://localhost:9090 | Metrics storage and querying |
+| Loki | http://localhost:3100 | Log aggregation |
+| cAdvisor | http://localhost:8081 | Container monitoring |
+
+### Default Credentials
+- **Grafana Username**: `admin`
+- **Grafana Password**: `FreeCompute2024!Secure`
+
+⚠️ **IMPORTANT**: Change the Grafana password after first login!
+
 ## 🔐 Security Considerations
 
 ### 1. Change Default Passwords
@@ -252,4 +309,4 @@ If you encounter issues:
 
 ---
 
-**Remember**: This deployment is designed to be safe and reversible. Your existing services will continue to run without interruption. 
+**Remember**: This deployment is designed to be safe and reversible. Your existing services will continue to run without interruption.

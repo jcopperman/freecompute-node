@@ -4,6 +4,7 @@ import { promisify } from 'util';
 import fs from 'fs/promises';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
+import metrics from './metrics.js';
 
 const execAsync = promisify(exec);
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -210,13 +211,23 @@ export async function performHealthChecks(initialRegistry = null) {
  * @param {number} interval - Interval in milliseconds
  */
 export function startHealthCheckScheduler(interval = 60000) {
-  // Perform initial health check
-  performHealthChecks();
+  // Run first health check immediately
+  performHealthChecks().then(results => {
+    // Update metrics based on health check results
+    metrics.updateServiceHealthMetrics(results.services);
+    metrics.updateNodeStatusMetric(results.healthy);
+  });
   
   // Schedule periodic health checks
-  const timer = setInterval(performHealthChecks, interval);
-  
-  return {
-    stop: () => clearInterval(timer)
-  };
+  setInterval(async () => {
+    try {
+      const results = await performHealthChecks();
+      
+      // Update metrics based on health check results
+      metrics.updateServiceHealthMetrics(results.services);
+      metrics.updateNodeStatusMetric(results.healthy);
+    } catch (error) {
+      console.error(`[${new Date().toISOString()}] ❌ Health check error:`, error);
+    }
+  }, interval);
 }
