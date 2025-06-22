@@ -34,7 +34,7 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'X-API-Key']
 }));
 app.use(express.json());
-app.use(metricsMiddleware()); // Add metrics middleware
+app.use(metricsMiddleware); // Add metrics middleware
 app.use(expressLogger(logger)); // Add request logging middleware
 
 // Rate limiting

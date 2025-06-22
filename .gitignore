@@ -1,3 +1,31 @@
 .env
 .bkp
 xl.meta
+
+# Data directories
+bootstrap/data/grafana/**
+bootstrap/data/prometheus/**
+bootstrap/data/loki/**
+bootstrap/data/minio/**
+
+# Backup files
+*.bak
+*.bak.*
+*.tmp
+*.backup
+
+# Logs
+*.log
+
+# Environment variables
+.env.*
+
+# Editor specific files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS specific files
+.DS_Store
+Thumbs.db

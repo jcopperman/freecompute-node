@@ -1,6 +1,6 @@
-# Monitoring Stack for Free Compute Node
+# Monitoring Stack for FreeCompute Node
 
-This directory contains the monitoring stack for the Free Compute Node, providing comprehensive logging, metrics collection, and visualization capabilities.
+This directory contains the monitoring stack for the FreeCompute Node, providing comprehensive logging, metrics collection, and visualization capabilities.
 
 ## Components
 
@@ -9,15 +9,34 @@ The monitoring stack includes the following components:
 - **Prometheus**: Time-series database for metrics collection
 - **Loki**: Log aggregation system
 - **Grafana**: Visualization platform for metrics and logs
-- **cAdvisor**: Container resource usage metrics collector
+- **Promtail**: Log collector for Loki
+- **Node Exporter**: System metrics collector
 
 ## Deployment
 
-The monitoring stack can be deployed independently after deploying the main Free Compute Node services:
+### Simplified Stack (For Testing)
+
+The simplified monitoring stack can be deployed independently for testing:
 
 ```bash
 cd ~/Repos/freecompute-node/monitoring
-./deploy-monitoring.sh
+docker-compose -f simplified-compose.yml up -d
+```
+
+### Integration with Full Stack
+
+To integrate the monitoring stack with the main FreeCompute Node:
+
+```bash
+cd ~/Repos/freecompute-node/monitoring
+./integrate-monitoring.sh
+```
+
+Then navigate to the bootstrap directory and start the full stack:
+
+```bash
+cd ~/Repos/freecompute-node/bootstrap
+docker-compose up -d
 ```
 
 ## Access Information
@@ -27,50 +46,58 @@ cd ~/Repos/freecompute-node/monitoring
 | Grafana | http://localhost:3000 | admin / FreeCompute2024!Secure |
 | Prometheus | http://localhost:9090 | N/A |
 | Loki | http://localhost:3100 | N/A |
-| cAdvisor | http://localhost:8081 | N/A |
 
-## Configuration
+## Troubleshooting
 
-The monitoring stack can be configured through the `.env` file in the monitoring directory:
+If you encounter issues with the monitoring stack, here are some common solutions:
 
-```
-PROMETHEUS_PORT=9090
-LOKI_PORT=3100
-GRAFANA_PORT=3000
-CADVISOR_PORT=8081
-GRAFANA_USER=admin
-GRAFANA_PASSWORD=FreeCompute2024!Secure
-NODE_NAME=freecompute-node
-LOKI_ENABLED=true
-```
+1. **Loki WAL permission issues**:
+   - Ensure the Loki data directory has proper permissions:
+   ```bash
+   chmod -R 777 ~/Repos/freecompute-node/bootstrap/data/loki
+   ```
+
+2. **Prometheus cannot reach targets**:
+   - Check that the service names in prometheus.yml match the container names
+   - Verify all services are running with `docker ps`
+
+3. **No logs in Grafana**:
+   - Ensure Promtail is properly configured to send logs to Loki
+   - Check that the Loki URL in Promtail's config is correct
+
+4. **Restarting the monitoring stack**:
+   ```bash
+   docker restart freecompute-prometheus freecompute-loki freecompute-grafana freecompute-promtail freecompute-node-exporter
+   ```
 
 ## Data Storage
 
 Monitoring data is stored in:
-- `/opt/freecompute-data/monitoring/prometheus`
-- `/opt/freecompute-data/monitoring/loki`
-- `/opt/freecompute-data/monitoring/grafana`
+- `~/Repos/freecompute-node/bootstrap/data/prometheus`
+- `~/Repos/freecompute-node/bootstrap/data/loki`
+- `~/Repos/freecompute-node/bootstrap/data/grafana`
 
 ## Pre-configured Dashboards
 
-The monitoring stack comes with pre-configured dashboards for:
-- System overview (CPU, memory, disk)
-- Container metrics
-- Log analysis
-- Service health status
+The monitoring stack comes with pre-configured dashboards:
+- FreeCompute Node Dashboard (services health, metrics, logs)
+- System monitoring (CPU, memory, disk, network)
 
-## Integration with Free Compute Node
+## Integration with FreeCompute Node
 
-The monitoring stack integrates with the existing Free Compute Node services:
+The monitoring stack integrates with the existing FreeCompute Node services:
 - The router service exposes metrics for Prometheus
-- Docker logs are captured by Loki
-- System metrics are collected by node_exporter
-- Container metrics are collected by cAdvisor
+- Docker logs are captured by Loki via Promtail
+- System metrics are collected by Node Exporter
+- All metrics are visualized in Grafana dashboards
 
-## Rollback
+## Testing the Monitoring Stack
 
-To remove the monitoring stack:
+You can generate test logs to verify the monitoring stack is working:
 
 ```bash
-/opt/freecompute-data/rollback-monitoring.sh
+cd ~/Repos/freecompute-node/monitoring
+./generate-test-logs.sh
 ```
+
+Then check the logs in Grafana (http://localhost:3000) > Explore > Select Loki data source > Query: `{job="system"}`

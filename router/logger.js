@@ -24,17 +24,22 @@ const createLogger = (service = 'router', lokiUrl = 'http://loki:3100') => {
     ]
   });
 
-  // Add Loki transport if enabled
+  // Only try to add Loki if explicitly enabled
   if (process.env.LOKI_ENABLED === 'true') {
-    logger.add(new LokiTransport({
-      host: lokiUrl,
-      labels: { service, node: process.env.NODE_NAME || 'freecompute-node' },
-      json: true,
-      batching: true,
-      interval: 5, // seconds
-      replaceTimestamp: false,
-      onConnectionError: (err) => console.error('Loki connection error:', err)
-    }));
+    try {
+      logger.add(new LokiTransport({
+        host: lokiUrl,
+        labels: { service, node: process.env.NODE_NAME || 'freecompute-node' },
+        json: true,
+        batching: true,
+        interval: 5, // seconds
+        replaceTimestamp: false,
+        onConnectionError: (err) => console.error('Loki connection error:', err)
+      }));
+      console.log('Loki logging enabled');
+    } catch (err) {
+      console.error('Failed to initialize Loki transport:', err);
+    }
   }
 
   return logger;
