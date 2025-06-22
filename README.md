@@ -1,6 +1,59 @@
 # The Free Compute Movement
 
-A sovereign, lo## What We're Building First
+A sovereign, lo## Quick Start
+
+```bash
+# Clone the repository
+git clone https://github.com/your-org/fr## Join Us
+
+We're building in public.
+If you want to contribute, test, host a node, or help us federate:
+
+* **GitHub Issues**: Report bugs and feature requests
+* **Documentation**: See [docs/](docs/) for detailed guides
+* **Quick Reference**: [docs/QUICK-REFERENCE.md](docs/QUICK-REFERENCE.md)
+* **Troubleshooting**: [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md)
+* **Production Deployment**: [bootstrap/PRODUCTION-DEPLOYMENT-GUIDE.md](bootstrap/PRODUCTION-DEPLOYMENT-GUIDE.md)
+
+Pull requests welcome. Dollars not required.
+
+---
+
+## Documentation
+
+| Guide | Purpose |
+|-------|---------|
+| [Quick Reference](docs/QUICK-REFERENCE.md) | Service URLs, commands, and common fixes |
+| [Troubleshooting](docs/TROUBLESHOOTING.md) | Detailed problem diagnosis and solutions |
+| [Production Deployment](bootstrap/PRODUCTION-DEPLOYMENT-GUIDE.md) | Safe deployment on production servers |
+| [Monitoring System](docs/monitoring-system.md) | Grafana, Prometheus, and observability |
+| [Mesh Federation](docs/mesh-federation.md) | Connecting multiple nodes |
+| [Release Notes](RELEASE-NOTES.md) | Recent fixes and improvements |e-node
+cd freecompute-node/bootstrap
+
+# Deploy the stack
+docker-compose up -d
+
+# Access your services
+open http://localhost:8080  # Dashboard
+open http://localhost:9003  # MinIO Console
+open http://localhost:3000  # Grafana
+```
+
+### Service URLs
+
+| Service | URL | Purpose |
+|---------|-----|---------|
+| **Dashboard** | http://localhost:8080 | Main control panel |
+| **MinIO Console** | http://localhost:9003 | Object storage management |
+| **MinIO API** | http://localhost:9002 | S3-compatible storage API |
+| **Grafana** | http://localhost:3000 | Monitoring dashboards |
+| **Prometheus** | http://localhost:9090 | Metrics collection |
+| **Router API** | http://localhost:8090 | Internal mesh networking |
+
+---
+
+## What We're Building First
 
 **`freecompute-node`**
 A micro data center you can run on your own terms.

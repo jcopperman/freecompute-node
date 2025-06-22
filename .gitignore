@@ -1,6 +1,7 @@
 .env
 .bkp
 xl.meta
+.db
 
 # Data directories
 bootstrap/data/grafana/**
@@ -16,6 +17,7 @@ bootstrap/data/minio/**
 
 # Logs
 *.log
+.map
 
 # Environment variables
 .env.*
@@ -29,3 +31,5 @@ bootstrap/data/minio/**
 # OS specific files
 .DS_Store
 Thumbs.db
+
+node_modules
