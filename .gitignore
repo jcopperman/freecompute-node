@@ -9,6 +9,12 @@ bootstrap/data/prometheus/**
 bootstrap/data/loki/**
 bootstrap/data/minio/**
 
+# Stack data directories
+stack/data/grafana/**
+stack/data/prometheus/**
+stack/data/loki/**
+stack/data/minio/**
+
 # Backup files
 *.bak
 *.bak.*
